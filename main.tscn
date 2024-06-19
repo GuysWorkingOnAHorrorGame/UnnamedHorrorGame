@@ -1,0 +1,76 @@
+[gd_scene load_steps=13 format=3 uid="uid://dmhyd0u5ri7te"]
+
+[ext_resource type="Shader" path="res://sky.gdshader" id="1_v8qbo"]
+[ext_resource type="Texture2D" uid="uid://dr8vh5rmt54ob" path="res://neotheta2.png" id="2_j36f0"]
+[ext_resource type="Script" path="res://player.gd" id="3_s0jjr"]
+[ext_resource type="Shader" path="res://post.gdshader" id="4_osy55"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rsphs"]
+shader = ExtResource("1_v8qbo")
+
+[sub_resource type="Sky" id="Sky_sivam"]
+sky_material = SubResource("ShaderMaterial_rsphs")
+
+[sub_resource type="Environment" id="Environment_yk76u"]
+background_mode = 2
+sky = SubResource("Sky_sivam")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_omx71"]
+albedo_texture = ExtResource("2_j36f0")
+
+[sub_resource type="BoxMesh" id="BoxMesh_q63d7"]
+lightmap_size_hint = Vector2i(59, 156)
+material = SubResource("StandardMaterial3D_omx71")
+add_uv2 = true
+size = Vector3(1, 10, 10)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_6wu48"]
+data = PackedVector3Array(-0.5, 5, 5, 0.5, 5, 5, -0.5, -5, 5, 0.5, 5, 5, 0.5, -5, 5, -0.5, -5, 5, 0.5, 5, -5, -0.5, 5, -5, 0.5, -5, -5, -0.5, 5, -5, -0.5, -5, -5, 0.5, -5, -5, 0.5, 5, 5, 0.5, 5, -5, 0.5, -5, 5, 0.5, 5, -5, 0.5, -5, -5, 0.5, -5, 5, -0.5, 5, -5, -0.5, 5, 5, -0.5, -5, -5, -0.5, 5, 5, -0.5, -5, 5, -0.5, -5, -5, 0.5, 5, 5, -0.5, 5, 5, 0.5, 5, -5, -0.5, 5, 5, -0.5, 5, -5, 0.5, 5, -5, -0.5, -5, 5, 0.5, -5, 5, -0.5, -5, -5, 0.5, -5, 5, 0.5, -5, -5, -0.5, -5, -5)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3fh84"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r85km"]
+shader = ExtResource("4_osy55")
+shader_parameter/wiggle = 0.03
+shader_parameter/wiggle_speed = 25.0
+shader_parameter/smear = 1.0
+shader_parameter/blur_samples = 15
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_yk76u")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0275727, -0.99962, 0, 0.99962, 0.0275727, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_q63d7")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_6wu48")
+
+[node name="The Sun Is A Deadly Laser" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.00318227, 0.630893, -0.775863, 0.00258764, 0.77587, 0.630888, 0.999992, -2.32833e-10, -0.00410155, -12.4657, 8.69264, 0.0301976)
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0906663, 2.43876, 0.0515509)
+script = ExtResource("3_s0jjr")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+shape = SubResource("CapsuleShape3D_3fh84")
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="CharacterBody3D/Camera3D"]
+
+[node name="ColorRect" type="ColorRect" parent="CharacterBody3D/Camera3D/CanvasLayer"]
+material = SubResource("ShaderMaterial_r85km")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
